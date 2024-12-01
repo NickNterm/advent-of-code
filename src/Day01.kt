@@ -69,13 +69,13 @@ fun main() {
         return sum
     }
 
-    val testInput = readInput("Day01_test")
+    val testInput = readInput("Day1_test")
     check(part1(testInput) == 11)
 
-    val testInputb = readInput("Day01_test")
+    val testInputb = readInput("Day1_test")
     check(part2(testInputb) == 31)
 
-    val input = readInput("Day01")
+    val input = readInput("Day1")
 
     part1(input).println()
     part2(input).println()
