@@ -1,118 +1,82 @@
-fun main() {
-    var words: Map<String, Int> = mapOf(
-        "one" to 1,
-        "two" to 2,
-        "three" to 3,
-        "four" to 4,
-        "five" to 5,
-        "six" to 6,
-        "seven" to 7,
-        "eight" to 8,
-        "nine" to 9
-    )
+import kotlin.math.abs
 
+fun main() {
     fun part1(input: List<String>): Int {
+        // creating 2 lists that we will fill with the rows
+        val rightList: MutableList<Int> = emptyList<Int>().toMutableList()
+        val leftList: MutableList<Int> = emptyList<Int>().toMutableList()
+
+        for (line in input) {
+            if (line.isEmpty()) break
+            // split the values
+            val splited = line.split("   ").map { it.toInt() }
+            // add the values to the lists
+            rightList.add(splited[0])
+            leftList.add(splited[1])
+        }
+        // Sort the lists. This is required cause then I am able to
+        // check the items one by one. Hot stuff
+        rightList.sort()
+        leftList.sort()
+
         var sum = 0
-        input.forEach {
-            sum += ((it.first { c -> c.isDigit() }.digitToInt() * 10) + it.last { c -> c.isDigit() }.digitToInt())
+        for (i in 0..rightList.lastIndex) {
+            // getting the abs diff of the elements
+            val dist = abs(leftList[i] - rightList[i])
+            // add to the sum
+            sum += dist
         }
         return sum
     }
 
     fun part2(input: List<String>): Int {
+        // create the same 2 lists to store the first values
+        val rightList: MutableList<Int> = emptyList<Int>().toMutableList()
+        val leftList: MutableList<Int> = emptyList<Int>().toMutableList()
+
+        // also add a map to save the num of shows of each element
+        val shows: MutableMap<Int, Int> = emptyMap<Int, Int>().toMutableMap()
+
+        for (line in input) {
+            if (line.isEmpty()) break
+            // split the values
+            val splited = line.split("   ").map { it.toInt() }
+            // add the values to the lists
+            rightList.add(splited[0])
+            leftList.add(splited[1])
+        }
+
         var sum = 0
-        input.forEach {
-            var firstDigit = 0;
-            var lastDigit = 0;
-            println(it)
-            it.windowed(5, 1, true).forEach { window ->
-                if (window.first().isDigit()) {
-                    if (firstDigit == 0) {
-                        firstDigit = window.first().digitToInt()
-                    }
-                }
-                if (window.last().isDigit()) {
-                    lastDigit = window.last().digitToInt()
-                }
-                words.keys.forEach { word ->
-                    if (window.startsWith(word)) {
-                        if (firstDigit == 0) {
-                            firstDigit = words[word]!!
-                        }
-                    }
-                    if (window.endsWith(word)) {
-                        lastDigit = words[word]!!
+        for (i in 0..rightList.lastIndex) {
+            // get the current element from the right list
+            val element: Int = rightList[i]
+            // if the item is not on the map, that means we need to calculate the shows
+            if (!shows.containsKey(element)) {
+                // init the map to 0
+                shows[element] = 0
+                // for loop on the list and increment the counter
+                leftList.forEach {
+                    if (it == element) {
+                        shows[element] = shows[element]!! + 1
                     }
                 }
             }
-            if (lastDigit == 0) {
-                lastDigit = firstDigit
-            }
-            if (firstDigit == 0) {
-                firstDigit = lastDigit
-            }
-            println(firstDigit * 10 + lastDigit)
-            sum += firstDigit * 10 + lastDigit
+            // final value is the shows * element
+            val value: Int = shows[element]!! * element
+            // add this to the sum
+            sum += value
         }
         return sum
     }
 
-    // Or read a large test input from the `src/Day01_test.txt` file:
     val testInput = readInput("Day01_test")
-    check(part1(testInput) == 142)
+    check(part1(testInput) == 11)
 
-    val testInputb = readInput("Day01_testb")
-    check(part2(testInputb) == 281)
-    // Read the input from the `src/Day01.txt` file.
+    val testInputb = readInput("Day01_test")
+    check(part2(testInputb) == 31)
+
     val input = readInput("Day01")
 
     part1(input).println()
-    println("------------")
     part2(input).println()
-    Day01(input).solvePart2().println()
-}
-
-class Day01(private val input: List<String>) {
-
-    private val words: Map<String, Int> = mapOf(
-        "one" to 1,
-        "two" to 2,
-        "three" to 3,
-        "four" to 4,
-        "five" to 5,
-        "six" to 6,
-        "seven" to 7,
-        "eight" to 8,
-        "nine" to 9
-    )
-
-    fun solvePart1(): Int =
-        input.sumOf { calibrationValue(it) }
-
-    fun solvePart2(): Int =
-        input.sumOf { row ->
-            calibrationValue(
-                // Run through each character and turn it into a digit or a null,
-                // and then map each of them to a String. In theory, we could take
-                // the first and last digits from the resulting list instead of joining.
-                row.mapIndexedNotNull { index, c ->
-                    // If it is a digit, take it as-is
-                    if (c.isDigit()) c
-                    else
-                    // Otherwise, see if this is the start of a word and if so map to the
-                    // digit that it represents.
-                        row.possibleWordsAt(index).firstNotNullOfOrNull { candidate ->
-                            words[candidate]
-                        }
-                }.joinToString()
-            )
-        }
-
-    private fun calibrationValue(row: String): Int =
-        "${row.first { it.isDigit() }}${row.last { it.isDigit() }}".toInt()
-
-    private fun String.possibleWordsAt(startingAt: Int): List<String> =
-        (3..5).map { len ->
-            substring(startingAt, (startingAt + len).coerceAtMost(length))
-        }
 }
