@@ -9,7 +9,7 @@ fun main() {
      */
     fun part1(input: List<String>): Long {
         // disk is the string
-        var disk: String = input[0]
+        val disk: String = input[0]
         // format with ','
         var format = ""
         // current id
@@ -38,7 +38,7 @@ fun main() {
                 // if the value has just . on the end and 0-9 or , on start we are done
                 if (!Regex("[0-9|,]+\\.?+").matches(format)) {
                     // split with ,
-                    var splitted = format.split(",")
+                    val splitted = format.split(",")
                     // remove a first dot
                     format = format.replaceFirst(".", splitted[splitted.lastIndex - 1])
                     // add the number there
@@ -61,7 +61,7 @@ fun main() {
 
 
     fun part2(input: List<String>): Long {
-        var disk: String = input[0]
+        val disk: String = input[0]
         var id = 0
         // now we save the parts on this map which is smooth
         val diskMap: SortedMap<Int, Pair<Int, Int>> = sortedMapOf()
@@ -83,7 +83,7 @@ fun main() {
         var key: Int? = diskMap.keys.first()
         while (true) {
             try {
-                var nextKey = diskMap.keys.find { it > key!! }
+                val nextKey = diskMap.keys.find { it > key!! }
                 if (diskMap[key]!!.first == -1 && diskMap[nextKey]!!.first == -1) {
                     diskMap[key!!] = diskMap[key]!!.copy(second = diskMap[nextKey]!!.second + diskMap[key]!!.second)
                     diskMap.remove(nextKey)
@@ -99,10 +99,10 @@ fun main() {
         var currentKey = keys.last()
         while (currentKey > 0) {
             // for all the keys we have
-            for (key in keys) {
+            for (@Suppress("NAME_SHADOWING") key in keys) {
                 // if it is an empty space with capacity more or equal to us and it's a smaller key we go there
                 if (diskMap[key]!!.first == -1 && diskMap[key]!!.second >= diskMap[currentKey]!!.second && key < currentKey) {
-                    var emptySpace = diskMap[key]!!.second
+                    val emptySpace = diskMap[key]!!.second
                     diskMap[key] = Pair(diskMap[currentKey]!!.first, diskMap[currentKey]!!.second)
                     // create the empty space that we leave behind
                     if (emptySpace - diskMap[currentKey]!!.second > 0) {
@@ -155,9 +155,9 @@ fun main() {
             currentKey = diskMap.keys.last { it < currentKey && diskMap[it]!!.first != -1 } ?: -1
         }
 
-        // calculate the checksum
+        // calculate the checksum with big Int
         var checksum: BigInteger = 0.toBigInteger()
-        for (key in diskMap.keys) {
+        for (@Suppress("NAME_SHADOWING") key in diskMap.keys) {
             if (diskMap[key]!!.first != -1) {
                 for (i in 0..<diskMap[key]!!.second) {
                     checksum += ((key + i) * diskMap[key]!!.first).toBigInteger()
