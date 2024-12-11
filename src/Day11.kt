@@ -87,7 +87,7 @@ fun main() {
     check(part1(testInput) == 55312)
 
     val testInputb = readInput("Day11_test")
-    part2(testInputb).println()
+    check(part2(testInputb) == 65601038650482)
 
     val input = readInput("Day11")
 
