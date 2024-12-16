@@ -173,7 +173,6 @@ fun main() {
     }
 
     fun part2(input: List<String>): Int {
-        // 806050 ^^^
         visited.clear()
         var result = 0
         input.forEachIndexed { row, line ->
