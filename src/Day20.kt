@@ -35,37 +35,37 @@ fun main() {
     fun part1(input: List<String>): Int {
         // input max = 93552
         var startPos = Pair(0, 0)
-        var endPos = Pair(0, 0)
         input.forEachIndexed { i, line ->
             line.forEachIndexed { j, c ->
                 if (c == 'S') {
                     startPos = Pair(i, j)
                 }
-                if (c == 'E') {
-                    endPos = Pair(i, j)
-                }
             }
         }
         val dist = dijkstra(input, startPos)
         val cheats: MutableSet<String> = mutableSetOf()
+        val checked: MutableSet<Pair<Int, Int>> = mutableSetOf()
         dist.forEach { distance ->
+            checked.add(distance.key)
             dist.forEach { distance2 ->
-                if (distance != distance2) {
-                    //2578
-                    if (abs(distance.value - distance2.value) >= 102) {
-                        if (abs(distance.key.first - distance2.key.first) == 2 && distance2.key.second == distance.key.second) {
-                            //println("Cheat for ${abs(distance.value - distance2.value) - 2}")
-                            cheats.add("${distance.key.first},${distance.key.second}|${distance2.key.first},${distance2.key.second}")
-                        }
-                        if (abs(distance.key.second - distance2.key.second) == 2 && distance2.key.first == distance.key.first) {
-                            //println("Cheat for ${abs(distance.value - distance2.value) - 2}")
-                            cheats.add("${distance.key.first},${distance.key.second}|${distance2.key.first},${distance2.key.second}")
+                if (!checked.contains(distance2.key)) {
+                    if (distance != distance2) {
+                        //2578
+                        if (abs(distance.value - distance2.value) >= 102) {
+                            if (abs(distance.key.first - distance2.key.first) == 2 && distance2.key.second == distance.key.second) {
+                                //println("Cheat for ${abs(distance.value - distance2.value) - 2}")
+                                cheats.add("${distance.key.first},${distance.key.second}|${distance2.key.first},${distance2.key.second}")
+                            }
+                            if (abs(distance.key.second - distance2.key.second) == 2 && distance2.key.first == distance.key.first) {
+                                //println("Cheat for ${abs(distance.value - distance2.value) - 2}")
+                                cheats.add("${distance.key.first},${distance.key.second}|${distance2.key.first},${distance2.key.second}")
+                            }
                         }
                     }
                 }
             }
         }
-        return dist[endPos]!!
+        return cheats.size
     }
 
     fun dijkstraWallPath(input: List<String>, start: Pair<Int, Int>, end: Pair<Int, Int>): Map<Pair<Int, Int>, Int> {
